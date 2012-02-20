@@ -1,0 +1,8 @@
+if (typeof(Msg) != 'undefined')
+	p #{Msg}
+form(method='post', action='https://cheese.caek.fi/ambrosia/register')
+	input(type='text', name="username", placeholder="Username")
+	input(type='password', name="password", placeholder="Password")
+	input(type='text', name="firstname", placeholder="First Name")
+	input(type='text', name="lastname", placeholder="Last Name")
+	input(type='submit', value='Register');

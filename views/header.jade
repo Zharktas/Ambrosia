@@ -1,0 +1,25 @@
+if (typeof(User) == 'undefined' || User == null )
+	script
+		var LoginHidden = true;
+		function ToggleLogin(){
+			var login =  $('#login');
+			if ( LoginHidden == true ){
+				login.slideDown('fast', function(){
+					LoginHidden = false;
+			});
+				}else{
+				login.slideUp('fast', function(){
+					LoginHidden = true;
+				});
+			}
+		}
+	div#header 
+		span(onclick="ToggleLogin();") Login
+	div#login
+		form(method="post", action="https://cheese.caek.fi/ambrosia/login")
+			input(type="text", name="user", placeholder="Username..")
+			input(type="password", name="password", placeholder="Password..")
+			input(type="submit", value="Login")
+else
+	div#header #{User} 
+		a(href="/ambrosia/logout") Logout
