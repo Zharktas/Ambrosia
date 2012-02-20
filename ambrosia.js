@@ -11,10 +11,8 @@ var options = {
 	cert: fs.readFileSync('../server.crt')
 };
 
-var db = {
-    user: 'username',
-    password: 'password'
-};
+var dbFile = fs.readFileSync('db_credentials.json', 'utf8');
+var db = JSON.parse(dbFile);
 
 var loginServer = express.createServer(options);
 
