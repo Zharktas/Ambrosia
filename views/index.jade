@@ -1,1 +1,12 @@
-h1 Ambrosia
+script
+    function SearchRecipe(name){
+        $.get('/recipes/search', {name: name },
+        function(data){
+            $("#results").empty();
+            for ( var i = 0; i < data.Results.length; ++i ){
+                $("#results").append(data.Results[i].name);
+            }
+        });
+    }
+input(type='text', name='Recipe', placeholder='Search..', onkeyup='SearchRecipe(this.value)')
+div#results

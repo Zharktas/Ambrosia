@@ -6,6 +6,8 @@ var jade = require('jade');
 
 var util = require('util'), crypto = require('crypto');
 
+var validator = require('express-validator');
+
 var options = {
 	key: fs.readFileSync('../server.key'),
 	cert: fs.readFileSync('../server.crt')
@@ -13,6 +15,8 @@ var options = {
 
 var dbFile = fs.readFileSync('db_credentials.json', 'utf8');
 var db = JSON.parse(dbFile);
+
+
 
 var loginServer = express.createServer(options);
 
@@ -33,14 +37,35 @@ var Client = require('mysql').Client,
 
 	
 	
-var ambrosia = express.createServer(
-	express.bodyParser(),
-	express.cookieParser(),
-	express.session({secret: 'boliver'}));
+var ambrosia = express.createServer();
+
+
+ambrosia.use(express.bodyParser());
+ambrosia.use(express.cookieParser());
+ambrosia.use(express.session({secret: 'boliver'}));
+ambrosia.use(express.static(__dirname + '/public'));
+//ambrosia.use(ambrosia.router);
+ambrosia.use(validator);
+
 
 ambrosia.set('views', __dirname + '/views');
 ambrosia.set('view engine', 'jade');
 //ambrosia.use(express.cookieParser({secret: "boliver" }));
+
+
+ambrosia.all('*', function(req, res, next){
+    if (req.session.user){
+        next();
+    }
+    else if ( req.path == '/register' || req.path == '/login' ){
+       next();
+    }
+
+    else{
+       res.render('login');
+   }
+});
+
 
 ambrosia.get('/db', function(req, res){
   		
@@ -68,13 +93,13 @@ ambrosia.get('/', function(req,res){
 	res.render('index',{User: null});
 });
 
-ambrosia.get('/*.js', function(req,res){
-	res.sendfile(__dirname + '/' + req.params[0] + '.js');
-});
+//ambrosia.get('/*.js', function(req,res){
+//	res.sendfile(__dirname + '/' + req.params[0] + '.js');
+//});
 
-ambrosia.get('/*.css', function(req,res){
-	res.sendfile(__dirname + '/' + req.params[0] + '.css');
-});
+//ambrosia.get('/*.css', function(req,res){
+//	res.sendfile(__dirname + '/' + req.params[0] + '.css');
+//});
 
 ambrosia.post('/login', function(req,res){
 	authenticate(req.body.user, req.body.password, function(err, user){
@@ -82,7 +107,7 @@ ambrosia.post('/login', function(req,res){
 		if ( err ){
 			res.render('index');
 		}
-		console.log(sys.inspect(user));
+		console.log(util.inspect(user));
 		req.session.regenerate(function(){
 			req.session.user = user.username;
 			res.render('index', {User: user.firstname + ' ' + user.lastname});
@@ -143,9 +168,10 @@ function hash(msg, key){
 };
 
 ambrosia.post('/register', function(req,res){
-
+    console.log("Registering..");
 	client.query('select username from user', function(err, results, fields){
-		if (err){
+		console.log("Querying..");
+        if (err){
 			throw err;
 		}
 		
@@ -164,6 +190,89 @@ ambrosia.post('/register', function(req,res){
 			res.render('register', {Msg: 'Logins Created'});
 		});	
 	});
+
+    console.log("ending");
+});
+
+ambrosia.get('/recipes', function(req, res){
+    var query = "SELECT id, name FROM recipe";
+
+    client.query(query, function(err, results, fields){
+        if (err){
+            // log the error
+            res.json({});
+        }
+
+        res.json({Recipes: results});
+    })
+});
+
+ambrosia.get('/recipe/:id', function(req, res){
+
+    res.json({});
+});
+
+ambrosia.get('/recipes/search', function(req, res){
+    req.sanitize('name').xss();
+
+    var query = "SELECT * FROM recipe " +
+        "WHERE name LIKE '%" + req.param('name') + "%'";
+
+    client.query(query, function(err, results, fields){
+        res.json({Results: results});
+    });
+});
+
+ambrosia.post('/recipe/new', function(req, res){
+    res.json({});
+});
+
+ambrosia.put('/recipe/:id', function(req, res){
+    res.json({});
+});
+
+ambrosia.del('/recipe/:id', function(req, res){
+    res.json({});
+});
+
+ambrosia.get('/ingredients', function(req, res){
+    var query = "SELECT * FROM ingredient";
+
+    client.query(query, function(err, results, fields){
+        if (err){
+            // log the error
+            res.json({});
+        }
+
+        res.json({Ingredients: results});
+    })
+});
+
+ambrosia.get('/ingredient/:id', function(req,res){
+    res.json({});
+});
+
+ambrosia.post('/ingredient/new', function(req, res){
+    res.json({});
+});
+
+ambrosia.put('/ingredient/:id', function(req, res){
+    res.json({});
+});
+
+ambrosia.del('/ingredient/:id', function(req, res){
+    res.json({});
+});
+
+ambrosia.get('/ingredient/search', function(req, res){
+    req.sanitize('name').xss();
+
+    var query = "SELECT * FROM ingredient " +
+        "WHERE name LIKE '%" + req.param('name') + "%'";
+
+    client.query(query, function(err, results, fields){
+        res.json({Results: results});
+    });
 });
 
 ambrosia.listen(3000,"127.0.0.1");
