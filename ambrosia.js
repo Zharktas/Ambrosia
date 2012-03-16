@@ -1,10 +1,9 @@
-var https = require('https');
 var fs = require('fs');
 var express = require('express');
 
 var jade = require('jade');
 
-var util = require('util'), crypto = require('crypto');
+var util = require('util'), crypto = require('crypto'), url = require('url');
 
 var validator = require('express-validator');
 
@@ -16,55 +15,47 @@ var options = {
 var dbFile = fs.readFileSync('db_credentials.json', 'utf8');
 var db = JSON.parse(dbFile);
 
-
-
-var loginServer = express.createServer(options);
-
-loginServer.post('/login', function(req, res){
-	res.send('logged in');
-});
-
-loginServer.listen(3100);
-var Client = require('mysql').Client,
-    client = new Client();
-    client.host = 'localhost';
-    client.port = 3306;
-    client.user = db.user;
-    client.password = db.password;
-    //client.connect();
-    // use the correct database
-    client.query('USE ambrosia'); // change this
-
-	
-	
 var ambrosia = express.createServer();
+
+var Client = require('mysql').Client;
+ambrosia.db = new Client();
+ambrosia.db.host = 'localhost';
+ambrosia.db.port = 3306;
+ambrosia.db.user = db.user;
+ambrosia.db.password = db.password;
+
+//client.connect();
+// use the correct database
+ambrosia.db.query('USE ambrosia'); // change this
+
+	
+	
 
 
 ambrosia.use(express.bodyParser());
 ambrosia.use(express.cookieParser());
 ambrosia.use(express.session({secret: 'boliver'}));
 ambrosia.use(express.static(__dirname + '/public'));
-//ambrosia.use(ambrosia.router);
 ambrosia.use(validator);
-
 
 ambrosia.set('views', __dirname + '/views');
 ambrosia.set('view engine', 'jade');
-//ambrosia.use(express.cookieParser({secret: "boliver" }));
 
+require('./api')(ambrosia, express);
 
 ambrosia.all('*', function(req, res, next){
+
     if (req.session.user){
         next();
     }
-    else if ( req.path == '/register' || req.path == '/login' ){
-       next();
+    else if ( req.path == '/register' || req.path == '/login'){
+        next();
     }
-
     else{
        res.render('login');
    }
 });
+
 
 
 ambrosia.get('/db', function(req, res){
@@ -93,13 +84,7 @@ ambrosia.get('/', function(req,res){
 	res.render('index',{User: null});
 });
 
-//ambrosia.get('/*.js', function(req,res){
-//	res.sendfile(__dirname + '/' + req.params[0] + '.js');
-//});
 
-//ambrosia.get('/*.css', function(req,res){
-//	res.sendfile(__dirname + '/' + req.params[0] + '.css');
-//});
 
 ambrosia.post('/login', function(req,res){
 	authenticate(req.body.user, req.body.password, function(err, user){
@@ -124,7 +109,7 @@ ambrosia.get('/logout', function(req,res){
 function authenticate(user, pass, fn){
 	
 	var hashedPass = hash(pass, salt);
-	client.query('SELECT * FROM user', function( err, results, fields ){
+	ambrosia.db.query('SELECT * FROM user', function( err, results, fields ){
 		if (err){
 			throw err;
 		}
@@ -194,7 +179,11 @@ ambrosia.post('/register', function(req,res){
     console.log("ending");
 });
 
-ambrosia.get('/recipes', function(req, res){
+ambrosia.get('/addrecipe', function(req,res){
+    res.render('addrecipe');
+});
+
+ambrosia.get('/api/recipes', function(req, res){
     var query = "SELECT id, name FROM recipe";
 
     client.query(query, function(err, results, fields){
@@ -207,12 +196,12 @@ ambrosia.get('/recipes', function(req, res){
     })
 });
 
-ambrosia.get('/recipe/:id', function(req, res){
+ambrosia.get('/api/recipes/:id', function(req, res){
 
     res.json({});
 });
 
-ambrosia.get('/recipes/search', function(req, res){
+ambrosia.get('/api/recipes/search', function(req, res){
     req.sanitize('name').xss();
 
     var query = "SELECT * FROM recipe " +
@@ -223,57 +212,20 @@ ambrosia.get('/recipes/search', function(req, res){
     });
 });
 
-ambrosia.post('/recipe/new', function(req, res){
+ambrosia.post('/api/recipes', function(req, res){
     res.json({});
 });
 
-ambrosia.put('/recipe/:id', function(req, res){
+ambrosia.put('/api/recipes/:id', function(req, res){
     res.json({});
 });
 
-ambrosia.del('/recipe/:id', function(req, res){
+ambrosia.del('/api/recipes/:id', function(req, res){
     res.json({});
 });
 
-ambrosia.get('/ingredients', function(req, res){
-    var query = "SELECT * FROM ingredient";
 
-    client.query(query, function(err, results, fields){
-        if (err){
-            // log the error
-            res.json({});
-        }
 
-        res.json({Ingredients: results});
-    })
-});
-
-ambrosia.get('/ingredient/:id', function(req,res){
-    res.json({});
-});
-
-ambrosia.post('/ingredient/new', function(req, res){
-    res.json({});
-});
-
-ambrosia.put('/ingredient/:id', function(req, res){
-    res.json({});
-});
-
-ambrosia.del('/ingredient/:id', function(req, res){
-    res.json({});
-});
-
-ambrosia.get('/ingredient/search', function(req, res){
-    req.sanitize('name').xss();
-
-    var query = "SELECT * FROM ingredient " +
-        "WHERE name LIKE '%" + req.param('name') + "%'";
-
-    client.query(query, function(err, results, fields){
-        res.json({Results: results});
-    });
-});
 
 ambrosia.listen(3000,"127.0.0.1");
 util.puts("Ambrosia running on port 3000");

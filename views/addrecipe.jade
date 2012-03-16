@@ -1,0 +1,9 @@
+script
+	function SaveIngredient(){
+		var name = $("#name").get(0).value;
+		if ( name != undefined ){
+			$.post("api/ingredients", {name: name} );
+		}
+	}
+input(type="text", id="name", name="name", placeholder="Ingredient")
+a(onclick="SaveIngredient()") Save

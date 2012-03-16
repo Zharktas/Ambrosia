@@ -2,9 +2,12 @@ body{
 	background-color: #aaa;
 }
 
-#header{
+#container{
+    width: 100%;
+
+}
+header{
 	background-color: lightblue;
-    position: absolute;
     top: 0px;
     left: 0px;
     width: 100%;

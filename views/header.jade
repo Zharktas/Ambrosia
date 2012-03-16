@@ -2,5 +2,7 @@ if (typeof(User) == 'undefined' || User == null )
 	div#header
 
 else
-	div#header #{User} 
+	header #{User}
+		a(href="/") Home
+		a(href="addrecipe") Add New Recipe
 		a(href="logout") Logout
