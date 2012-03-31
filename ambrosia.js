@@ -7,30 +7,27 @@ var util = require('util'), crypto = require('crypto'), url = require('url');
 
 var validator = require('express-validator');
 
+var mysql = require('mysql');
+
+
 var options = {
 	key: fs.readFileSync('../server.key'),
 	cert: fs.readFileSync('../server.crt')
 };
 
+var ambrosia = express.createServer();
+
 var dbFile = fs.readFileSync('db_credentials.json', 'utf8');
 var db = JSON.parse(dbFile);
 
-var ambrosia = express.createServer();
+ambrosia.db = mysql.createClient({
+    user: db.user,
+    password: db.password,
+    host: 'localhost',
+    port: 3306
+});
 
-var Client = require('mysql').Client;
-ambrosia.db = new Client();
-ambrosia.db.host = 'localhost';
-ambrosia.db.port = 3306;
-ambrosia.db.user = db.user;
-ambrosia.db.password = db.password;
-
-//client.connect();
-// use the correct database
-ambrosia.db.query('USE ambrosia'); // change this
-
-	
-	
-
+ambrosia.db.query('USE ' + db.database);
 
 ambrosia.use(express.bodyParser());
 ambrosia.use(express.cookieParser());
@@ -41,7 +38,9 @@ ambrosia.use(validator);
 ambrosia.set('views', __dirname + '/views');
 ambrosia.set('view engine', 'jade');
 
+//require('./db')(ambrosia);
 require('./api')(ambrosia, express);
+
 
 ambrosia.all('*', function(req, res, next){
 
@@ -87,16 +86,21 @@ ambrosia.get('/', function(req,res){
 
 
 ambrosia.post('/login', function(req,res){
-	authenticate(req.body.user, req.body.password, function(err, user){
-		console.log('foo');
+	console.log(req.body.user + " " + req.body.password);
+    authenticate(req.body.user, req.body.password, function(err, user){
+
 		if ( err ){
+            console.log(err);
 			res.render('index');
 		}
-		console.log(util.inspect(user));
-		req.session.regenerate(function(){
-			req.session.user = user.username;
-			res.render('index', {User: user.firstname + ' ' + user.lastname});
-		});
+        else{
+		    req.session.regenerate(function(){
+			    req.session.user = user.username;
+                req.session.user_id = user.user_id;
+                req.session.group_id = user.group_id;
+			    res.render('index', {User: user.firstname + ' ' + user.lastname});
+            });
+        }
 	});
 });
 
@@ -109,34 +113,35 @@ ambrosia.get('/logout', function(req,res){
 function authenticate(user, pass, fn){
 	
 	var hashedPass = hash(pass, salt);
-	ambrosia.db.query('SELECT * FROM user', function( err, results, fields ){
-		if (err){
+
+    var query = "SELECT users.id as uid, groups.id as gid, firstname, lastname, username, password FROM users " +
+        "JOIN users_has_groups ON users.id = users_id " +
+        "JOIN groups ON groups_id = groups.id " +
+        "WHERE username = ? and password = ?";
+
+	ambrosia.db.query(query,[user, hashedPass], function( err, results, fields ){
+        console.log(results);
+
+        if (err){
+            console.log(err);
 			throw err;
 		}
 		
-		
-		for ( var i in results ){
-			if ( results[i].username == user ){
-				console.log('Comparing passwords');
-				console.log(results[i].password);
-				console.log(hashedPass);
-				if ( results[i].password == hashedPass ){
-					var User = {
-						username: results[i].username,
-						firstname: results[i].firstname,
-						lastname: results[i].lastname
-					};
+		if (results.length != 1){
+            return fn( new Error('Invalid credentials'));
+        }
+
+        var User = {
+			username: results[0].username,
+		    firstname: results[0].firstname,
+			lastname: results[0].lastname,
+            user_id: results[0].uid,
+            group_id: results[0].gid
+		};
 					
-					console.log('returning user');
-					return fn(null, User);
-				}
-				else{
-					return fn( new Error('invalid password'));
-				}
-			}
-		}
-		
-		return fn(new Error('unknown user'));
+			return fn(null, User);
+
+
 		
 	});	
 };
@@ -147,82 +152,15 @@ ambrosia.get('/register', function(req,res){
 
 var salt = 'KissaOnMuhvi';
 function hash(msg, key){
-	console.log(msg);
-	console.log(key);
 	return crypto.createHmac('sha256', key).update(msg).digest('hex');
 };
 
-ambrosia.post('/register', function(req,res){
-    console.log("Registering..");
-	client.query('select username from user', function(err, results, fields){
-		console.log("Querying..");
-        if (err){
-			throw err;
-		}
-		
-		for ( var i in results ){
-			if (results[i].username == req.body.username ){
-				res.render('register', {Msg: 'Error: Existing Username'});
-				return;
-			}
-		}
-		
-		var hashedPass = hash(req.body.password, salt);
-		var query = 'INSERT INTO user ' +
-		'(username, password, firstname, lastname)' +
-		'VALUES(\'' + req.body.username + '\',\'' + hashedPass + '\',\'' + req.body.firstname + '\',\'' + req.body.lastname + '\')';
-		client.query(query, function(err, results, fields){
-			res.render('register', {Msg: 'Logins Created'});
-		});	
-	});
-
-    console.log("ending");
-});
 
 ambrosia.get('/addrecipe', function(req,res){
     res.render('addrecipe');
 });
 
-ambrosia.get('/api/recipes', function(req, res){
-    var query = "SELECT id, name FROM recipe";
 
-    client.query(query, function(err, results, fields){
-        if (err){
-            // log the error
-            res.json({});
-        }
-
-        res.json({Recipes: results});
-    })
-});
-
-ambrosia.get('/api/recipes/:id', function(req, res){
-
-    res.json({});
-});
-
-ambrosia.get('/api/recipes/search', function(req, res){
-    req.sanitize('name').xss();
-
-    var query = "SELECT * FROM recipe " +
-        "WHERE name LIKE '%" + req.param('name') + "%'";
-
-    client.query(query, function(err, results, fields){
-        res.json({Results: results});
-    });
-});
-
-ambrosia.post('/api/recipes', function(req, res){
-    res.json({});
-});
-
-ambrosia.put('/api/recipes/:id', function(req, res){
-    res.json({});
-});
-
-ambrosia.del('/api/recipes/:id', function(req, res){
-    res.json({});
-});
 
 
 
