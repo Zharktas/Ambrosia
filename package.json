@@ -7,7 +7,7 @@
 	"scripts": {
 		"test": "make test"
 	},
-	"dependecies": {
+	"dependencies": {
 		"express": ">= 2.5.0",
 		"jade": ">= 0.22.0",
 		"mysql": ">= 0.9.5",
