@@ -1,0 +1,16 @@
+{
+	"name": "ambrosia",
+	"version": "0.0.1",
+	"description": "Recipe database with HTML5-interface and API.",
+	"author": "Jari-Pekka Voutilainen",
+	"engines": {"node": ">= 0.6.x < 0.8.0" },
+	"scripts": {
+		"test": "make test"
+	},
+	"dependecies": {
+		"express": ">= 2.5.0",
+		"jade": ">= 0.22.0",
+		"mysql": ">= 0.9.5",
+		"validator": ">= 0.4.5"
+	}
+}
