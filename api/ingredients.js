@@ -1,12 +1,13 @@
 module.exports = function(ambrosia, express){
     ambrosia.get('/api/ingredients', function(req, res){
 
-        var query = "SELECT * FROM ingredient";
+        var query = "SELECT * FROM ingredients " +
+            "where group_id = ?";
 
-        ambrosia.db.query(query, function(err, results, fields){
+        ambrosia.db.query(query,[req.session.group_id], function(err, results, fields){
             if (err){
                 // log the error
-                res.json({});
+                throw err;
             }
 
             res.json({Ingredients: results});
