@@ -1,0 +1,112 @@
+{
+	"apiVersion": "0.1",
+	"apis":[
+		{
+			"path": "/users/",
+			"operations": [
+				{
+					"httpMethod": "GET",
+					"summary": "Get all users.",
+					"nickname": "GetAllUsers"
+				},
+				{
+					"httpMethod": "POST",
+					"summary": "Create new user.",
+					"nickname": "CreateUser",
+					"parameters":[
+						{
+							"name": "firstname",
+							"description": "Firstname of the user.",
+							"dataType": "string",
+							"required": true,
+							"paramType": "query"
+						},
+						{
+							"name": "lastname",
+							"description": "Lastname of the user.",
+							"dataType": "string",
+							"required": true,
+							"paramType": "query"
+						},
+						{
+							"name": "username",
+							"description": "Username of the user.",
+							"dataType": "string",
+							"required": true,
+							"paramType": "query"
+						},
+						{
+							"name": "password",
+							"description": "Password of the user.",
+							"dataType": "string",
+							"required": true,
+							"paramType": "query"
+						}
+					]
+				}
+			]
+		},
+		{
+			"path": "/users/{userId}",
+			"operations":[
+				{
+					"httpMethod": "DELETE",
+					"summary": "Deleles user",
+					"nickname": "DelUser",
+					"notes": "Not implemented",
+					"parameters":[{
+						"name": "userId",
+						"description": "Id of the user.",
+						"dataType": "integer",
+						"required": true,
+						"paramType": "path"
+					}]
+				},
+				{
+					"httpMethod": "PUT",
+					"summary": "Updates user",
+					"nickname": "UpdateUser",
+					"notes": "Not implemented",
+					"parameters":[{
+						"name": "userId",
+						"description": "Id of the user.",
+						"dataType": "integer",
+						"required": true,
+						"paramType": "path"
+					},
+						{
+							"name": "firstname",
+							"description": "Firstname of the user.",
+							"dataType": "string",
+							"required": true,
+							"paramType": "query"
+						},
+						{
+							"name": "lastname",
+							"description": "Lastname of the user.",
+							"dataType": "string",
+							"required": true,
+							"paramType": "query"
+						},
+						{
+							"name": "username",
+							"description": "Username of the user.",
+							"dataType": "string",
+							"required": true,
+							"paramType": "query"
+						},
+						{
+							"name": "password",
+							"description": "Password of the user.",
+							"dataType": "string",
+							"required": true,
+							"paramType": "query"
+						}
+					]
+				}
+			]
+		}
+	],
+	"basePath": "/api",
+	"resourcePath": "/users"
+}

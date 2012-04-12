@@ -2,7 +2,7 @@ var crypto = require('crypto');
 
 module.exports = function(ambrosia){
     ambrosia.get('/api/users', function(req,res){
-
+        res.json({Msg: "hi"});
     });
 
     ambrosia.post('/api/users', function(req,res){
@@ -64,7 +64,7 @@ module.exports = function(ambrosia){
                             return;
                         }
 
-                        res.json({success: true})
+                        res.json({success: true}, 201)
                     });
 
                 });

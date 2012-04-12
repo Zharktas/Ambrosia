@@ -1,0 +1,29 @@
+{
+	"apiVersion": "0.1",
+	"apis":[
+		{
+			"name": "Ingredients",
+			"description": "Returns all ingredients of user.",
+			"path": "/ingredients/",
+			"operations": [
+				{
+					"parameters": [
+						{
+							"name": "username",
+							"description": "Username of the user.",
+							"dataType": "string",
+							"required": true,
+							"paramType": "query"
+						}
+					],
+					"httpMethod": "GET",
+					"summary": "Get all ingredients by user.",
+					"notes": "lorem ipsum",
+					"nickname": "foobar"
+				}
+			]
+		}
+	],
+	"basePath": "/api",
+	"resourcePath": "/ingredients"
+}

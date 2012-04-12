@@ -1,0 +1,15 @@
+{
+	"apis":[
+				{
+			"path": "users.{format}",
+			"description": "Operations for users."
+		},
+		{ 
+			"path": "ingredients.{format}",
+			"description": "Operations for ingredients."
+		}
+	],
+	"apiVersion": "0.1",
+	"basePath": "http://localhost:3000/"
+	
+}

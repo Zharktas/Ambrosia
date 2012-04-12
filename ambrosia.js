@@ -47,7 +47,7 @@ ambrosia.all('*', function(req, res, next){
     if (req.session.user){
         next();
     }
-    else if ( req.path == '/register' || req.path == '/login'){
+    else if ( req.path == '/register' || req.path == '/login' || req.path.indexOf("/api/") == 0){
         next();
     }
     else{
@@ -57,27 +57,6 @@ ambrosia.all('*', function(req, res, next){
 
 
 
-ambrosia.get('/db', function(req, res){
-  		
-		res.writeHead(200, {'Content-Type': 'text/plain'});
-		// Basic Select query
-		client.query('SELECT * FROM recipe', // change this
-		function selectCb(err, results, fields) {
-    			if (err) {
-     		 	throw err;
-    			}
-			//    console.log(results);
-			//    console.log(fields);
-			//    console.log(JSON.stringify(results)); // left these in so you can do some console debugging
- 
-			//For each item do something with the result
-			for (var i in results){
-          			var result = results[i];
-          			res.write(sys.inspect(result)+":"); // Writes to the web browser the value of test then a : to seperate values
-      			}
-      			res.end(); // end the request.
-  		});
-	});
 
 ambrosia.get('/', function(req,res){
 	res.render('index',{User: null});
@@ -165,5 +144,5 @@ ambrosia.get('/addrecipe', function(req,res){
 
 
 
-ambrosia.listen(3000,"127.0.0.1");
+ambrosia.listen(3000);
 util.puts("Ambrosia running on port 3000");
