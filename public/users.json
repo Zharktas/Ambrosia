@@ -107,6 +107,6 @@
 			]
 		}
 	],
-	"basePath": "/api",
+	"basePath": "/ambrosia/api",
 	"resourcePath": "/users"
 }

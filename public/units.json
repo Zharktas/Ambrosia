@@ -130,6 +130,6 @@
 			]
 		}
 	],
-	"basePath": "/api",
+	"basePath": "/ambrosia/api",
 	"resourcePath": "/units"
 }
