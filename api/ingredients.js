@@ -1,5 +1,5 @@
 module.exports = function(ambrosia, express){
-    ambrosia.get('/api/ingredients', function(req, res){
+    ambrosia.get('/api/ingredients', ambrosia.VerifyAuth, function(req, res){
 
         var query = "SELECT * FROM ingredients " +
             "where group_id = ?";
@@ -15,11 +15,11 @@ module.exports = function(ambrosia, express){
 
     });
 
-    ambrosia.get('/api/ingredients/:id', function(req,res){
+    ambrosia.get('/api/ingredients/:id', ambrosia.VerifyAuth, function(req,res){
         res.json({});
     });
 
-    ambrosia.post('/api/ingredients', function(req, res){
+    ambrosia.post('/api/ingredients', ambrosia.VerifyAuth, function(req, res){
         req.sanitize('name').xss();
 
         var name = req.param('name');
@@ -48,15 +48,42 @@ module.exports = function(ambrosia, express){
 
     });
 
-    ambrosia.put('/api/ingredients/:id', function(req, res){
-        res.json({});
+    ambrosia.put('/api/ingredients/:id', ambrosia.VerifyAuth, function(req, res){
+        var id = req.params.id;
+        var name = req.body.name;
+
+        var sql = "UPDATE ingredients " +
+            "SET name = ? " +
+            "WHERE id = ?";
+
+        ambrosia.db.query(sql,[name, id], function(err, results){
+            if (err){
+                console.log(err);
+            }
+            console.log(results);
+            res.json({Msg: "Record Updated"}, 200 );
+        })
+
     });
 
-    ambrosia.del('/api/ingredients/:id', function(req, res){
-        res.json({});
+    ambrosia.del('/api/ingredients/:id', ambrosia.VerifyAuth, function(req, res){
+        var id = req.params.id;
+
+        var sql = "DELETE FROM ingredients " +
+            "WHERE id = ?";
+
+        console.log(sql);
+        console.log(id);
+        ambrosia.db.query(sql,[id], function(err, results){
+            if (err){
+                console.log(err);
+            }
+            console.log(results);
+            res.json({Msg: "Record deleted"}, 200 );
+        });
     });
 
-    ambrosia.get('/api/ingredients/search', function(req, res){
+    ambrosia.get('/api/ingredients/search', ambrosia.VerifyAuth, function(req, res){
         req.sanitize('name').xss();
 
         var query = "SELECT * FROM ingredient " +

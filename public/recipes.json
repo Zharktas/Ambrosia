@@ -2,7 +2,7 @@
 	"apiVersion": "0.1",
 	"apis":[
 		{
-			"path": "/ingredients/",
+			"path": "/recipes/",
 			"operations": [
 				{
 					"parameters": [
@@ -23,15 +23,15 @@
 
 					],
 					"httpMethod": "GET",
-					"summary": "Get all ingredients by user.",
+					"summary": "Get all recipes by user.",
 					"notes": "lorem ipsum",
-					"nickname": "GetIngredients"
+					"nickname": "GetRecipes"
 				},
 				{
 					"httpMethod": "POST",
-					"summary": "Create new ingredient.",
+					"summary": "Create new recipe.",
 					"notes": "lorem ipsum",
-					"nickname": "CreateIngredient",
+					"nickname": "CreateRecipe",
 					"parameters": [
 						{
 							"name": "username",
@@ -53,13 +53,13 @@
 			]
 		},
 		{
-			"path": "/ingredients/{IngredientId}",
+			"path": "/recipes/{RecipeId}",
 			"operations": [
 				{
 					"httpMethod": "PUT",
-					"summary": "Update ingredient.",
+					"summary": "Update recipe.",
 					"notes": "lorem ipsum",
-					"nickname": "UpdateIngredient",
+					"nickname": "UpdateRecipe",
 					"parameters": [
 						{
 							"name": "username",
@@ -76,8 +76,8 @@
 							"paramType": "query"
 						},
 						{
-							"name": "IngredientId",
-							"description": "Ingredient's id.",
+							"name": "RecipeId",
+							"description": "Recipe's id.",
 							"dataType": "string",
 							"required": true,
 							"paramType": "path"
@@ -87,9 +87,9 @@
 				},
 				{
 					"httpMethod": "DELETE",
-					"summary": "Delete ingredient.",
+					"summary": "Delete recipe.",
 					"notes": "lorem ipsum",
-					"nickname": "DeleteIngredient",
+					"nickname": "DeleteRecipe",
 					"parameters": [
 						{
 							"name": "username",
@@ -106,8 +106,8 @@
 							"paramType": "query"
 						},
 						{
-							"name": "IngredientId",
-							"description": "Ingredient's id.",
+							"name": "RecipeId",
+							"description": "Recipe's id.",
 							"dataType": "string",
 							"required": true,
 							"paramType": "path"
@@ -116,8 +116,59 @@
 					]
 				}
 			]
+		},
+		{
+			"path": "/recipes/{RecipeId}/ingredients/",
+			"operations": [
+				{
+					"parameters": [
+						{
+							"name": "username",
+							"description": "Username of the user.",
+							"dataType": "string",
+							"required": true,
+							"paramType": "query"
+						},
+						{
+							"name": "hash",
+							"description": "Hash of the user's password.",
+							"dataType": "string",
+							"required": true,
+							"paramType": "query"
+						}
+
+					],
+					"httpMethod": "GET",
+					"summary": "Get all ingredients of recipe.",
+					"notes": "Not implemented",
+					"nickname": "GetIngredientsOfRecipe"
+				},
+				{
+					"httpMethod": "POST",
+					"summary": "Add new ingredient to the recipe.",
+					"notes": "Not implemented",
+					"nickname": "AddIngredientToRecipe",
+					"parameters": [
+						{
+							"name": "username",
+							"description": "Username of the user.",
+							"dataType": "string",
+							"required": true,
+							"paramType": "query"
+						},
+						{
+							"name": "hash",
+							"description": "Hash of the user's password.",
+							"dataType": "string",
+							"required": true,
+							"paramType": "query"
+						}
+
+					]
+				}
+			]
 		}
 	],
 	"basePath": "/api",
-	"resourcePath": "/ingredients"
+	"resourcePath": "/recipes"
 }

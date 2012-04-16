@@ -7,6 +7,14 @@
 		{ 
 			"path": "ingredients.{format}",
 			"description": "Operations for ingredients."
+		},
+		{
+			"path": "recipes.{format}",
+			"description": "Operations for recipes."
+		},
+		{
+			"path": "units.{format}",
+			"description": "Operations for units."
 		}
 	],
 	"apiVersion": "0.1",

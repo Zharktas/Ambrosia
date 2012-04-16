@@ -1,5 +1,6 @@
 var crypto = require('crypto');
 
+
 module.exports = function(ambrosia){
     ambrosia.get('/api/users', function(req,res){
         res.json({Msg: "hi"});
@@ -38,6 +39,7 @@ module.exports = function(ambrosia){
                     return;
                 }
 
+
                 var group = {
                     name: req.body.username
                 };
@@ -64,7 +66,11 @@ module.exports = function(ambrosia){
                             return;
                         }
 
-                        res.json({success: true}, 201)
+                        var getHash = "SELECT password FROM users " +
+                            "WHERE username = ?";
+                        ambrosia.db.query(getHash, [req.body.username], function(err, results){
+                            res.json({username: req.body.username, hash: results[0].password}, 201);
+                        });
                     });
 
                 });

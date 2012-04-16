@@ -2,7 +2,7 @@
 	"apiVersion": "0.1",
 	"apis":[
 		{
-			"path": "/ingredients/",
+			"path": "/units/",
 			"operations": [
 				{
 					"parameters": [
@@ -23,15 +23,14 @@
 
 					],
 					"httpMethod": "GET",
-					"summary": "Get all ingredients by user.",
+					"summary": "Get all units by user.",
 					"notes": "lorem ipsum",
-					"nickname": "GetIngredients"
+					"nickname": "GetUnits"
 				},
 				{
 					"httpMethod": "POST",
-					"summary": "Create new ingredient.",
-					"notes": "lorem ipsum",
-					"nickname": "CreateIngredient",
+					"summary": "Create new unit.",
+					"nickname": "CreateUnit",
 					"parameters": [
 						{
 							"name": "username",
@@ -43,6 +42,13 @@
 						{
 							"name": "hash",
 							"description": "Hash of the user's password.",
+							"dataType": "string",
+							"required": true,
+							"paramType": "query"
+						},
+						{
+							"name": "name",
+							"description": "Name of the unit.",
 							"dataType": "string",
 							"required": true,
 							"paramType": "query"
@@ -53,13 +59,13 @@
 			]
 		},
 		{
-			"path": "/ingredients/{IngredientId}",
+			"path": "/units/{UnitId}",
 			"operations": [
 				{
 					"httpMethod": "PUT",
-					"summary": "Update ingredient.",
-					"notes": "lorem ipsum",
-					"nickname": "UpdateIngredient",
+					"summary": "Update unit.",
+					"notes": "Not implemented",
+					"nickname": "UpdateUnit",
 					"parameters": [
 						{
 							"name": "username",
@@ -76,20 +82,26 @@
 							"paramType": "query"
 						},
 						{
-							"name": "IngredientId",
-							"description": "Ingredient's id.",
+							"name": "UnitId",
+							"description": "Unit's id.",
 							"dataType": "string",
 							"required": true,
 							"paramType": "path"
+						},
+						{
+							"name": "name",
+							"description": "Unit's name.",
+							"dataType": "string",
+							"required": true,
+							"paramType": "query"
 						}
 
 					]
 				},
 				{
 					"httpMethod": "DELETE",
-					"summary": "Delete ingredient.",
-					"notes": "lorem ipsum",
-					"nickname": "DeleteIngredient",
+					"summary": "Delete Unit.",
+					"nickname": "DeleteUnit",
 					"parameters": [
 						{
 							"name": "username",
@@ -106,7 +118,7 @@
 							"paramType": "query"
 						},
 						{
-							"name": "IngredientId",
+							"name": "UnitId",
 							"description": "Ingredient's id.",
 							"dataType": "string",
 							"required": true,
@@ -119,5 +131,5 @@
 		}
 	],
 	"basePath": "/api",
-	"resourcePath": "/ingredients"
+	"resourcePath": "/units"
 }
