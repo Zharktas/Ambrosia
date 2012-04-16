@@ -18,6 +18,6 @@
 		}
 	],
 	"apiVersion": "0.1",
-	"basePath": "http://localhost:3000/"
+	"basePath": "http://cheese.caek.fi/ambrosia/"
 	
 }
