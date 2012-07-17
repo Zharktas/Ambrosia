@@ -1,5 +1,5 @@
 before_script:
-  - mysql -r 'create database ambrosia_test;'
+  - mysql -r 'create database myapp_test;'
 language: node_js
 node_js:
   - 0.8
