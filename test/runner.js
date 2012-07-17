@@ -1,10 +1,11 @@
 var expect = require('chai').expect;
 var mysql = require('mysql');
-var db;
+
 
 suite('Database', function(){
+    var db;
     setup(function(){
-        var db = mysql.createClient({
+        db = mysql.createClient({
             user: 'root',
             password: '',
             host: 'localhost',
