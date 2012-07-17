@@ -9,5 +9,5 @@ var db = mysql.createClient({
 });
 
 db.query('USE ' + 'ambrosia_test', function(err){
-    expect(err).to.equal(null);
+    expect(err).to.be.null;
 });
