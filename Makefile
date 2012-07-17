@@ -1,5 +1,5 @@
 test:
 	@./node_modules/mocha/bin/mocha \
-		--ui exports
+		--ui tdd
 
 .PHONY: test
