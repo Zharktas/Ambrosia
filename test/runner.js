@@ -11,11 +11,14 @@ suite('Database', function(){
             host: 'localhost',
             port: 3306
         });
+
    });
 
-    test("Connect DB", function(){
+    test("Connect DB", function(done){
         db.query('USE ' + 'ambrosia_test', function(err){
-            expect(err).not.to.be.null;
+            expect(err).to.be.null;
+            done();
         });
     });
+
 });
