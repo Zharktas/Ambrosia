@@ -1,21 +1,21 @@
 var fs = require('fs');
 var express = require('express');
-
+var http = require('http');
 var jade = require('jade');
 
 var util = require('util'), crypto = require('crypto'), url = require('url');
 
-var validator = require('express-validator');
+//var validator = require('express-validator');
 
 var mysql = require('mysql');
 
 
-var options = {
-	key: fs.readFileSync('../server.key'),
-	cert: fs.readFileSync('../server.crt')
-};
+//var options = {
+//	key: fs.readFileSync('../server.key'),
+//	cert: fs.readFileSync('../server.crt')
+//};
 
-var ambrosia = express.createServer();
+var ambrosia = express();
 
 var dbFile = fs.readFileSync('db_credentials.json', 'utf8');
 var db = JSON.parse(dbFile);
@@ -27,16 +27,19 @@ ambrosia.db = mysql.createClient({
     port: 3306
 });
 
-ambrosia.db.query('USE ' + db.database);
+ambrosia.db.query('USE ' + db.database, function(err){
+    console.log("no db");
+});
 
 ambrosia.use(express.bodyParser());
 ambrosia.use(express.cookieParser());
 ambrosia.use(express.session({secret: 'boliver'}));
 ambrosia.use(express.static(__dirname + '/public'));
-ambrosia.use(validator);
+//ambrosia.use(validator);
 
 ambrosia.set('views', __dirname + '/views');
 ambrosia.set('view engine', 'jade');
+ambrosia.set('port', process.env.PORT || 3000);
 
 //require('./db')(ambrosia);
 require('./api')(ambrosia, express);
@@ -144,5 +147,6 @@ ambrosia.get('/addrecipe', function(req,res){
 
 
 
-ambrosia.listen(3000);
-util.puts("Ambrosia running on port 3000");
+http.createServer(ambrosia).listen(ambrosia.get('port'), function(){
+    console.log("Express server listening on port " + ambrosia.get('port'));
+});
