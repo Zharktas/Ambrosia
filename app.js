@@ -11,7 +11,7 @@ var mysql = require('mysql');
 
 var ambrosia = express();
 
-ambrosia.configure(function(){
+ambrosia.configure('all', function(){
     ambrosia.set('port', process.env.PORT || 3000);
     ambrosia.set('views', __dirname + '/views');
     ambrosia.set('view engine', 'jade');
@@ -35,7 +35,9 @@ ambrosia.db = mysql.createClient({
 });
 
 ambrosia.db.query('USE ' + db.database, function(err){
-    console.log("no db");
+    if (err){
+        console.log("no db");
+    }
 });
 
 require('./api')(ambrosia, express);
@@ -91,7 +93,7 @@ function authenticate(user, pass, fn){
         "JOIN groups ON groups_id = groups.id " +
         "WHERE username = ? and password = ?";
 
-	ambrosia.db.query(query,[user, hashedPass], function( err, results, fields ){
+	ambrosia.db.query(query,[user, hashedPass], function( err, results){
         console.log(results);
 
         if (err){
@@ -116,7 +118,7 @@ function authenticate(user, pass, fn){
 
 		
 	});	
-};
+}
 
 ambrosia.get('/register', function(req,res){
 	res.render('register');
@@ -125,7 +127,7 @@ ambrosia.get('/register', function(req,res){
 var salt = 'KissaOnMuhvi';
 function hash(msg, key){
 	return crypto.createHmac('sha256', key).update(msg).digest('hex');
-};
+}
 
 
 ambrosia.get('/addrecipe', function(req,res){
