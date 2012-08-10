@@ -31,15 +31,28 @@ ambrosia.db.query('USE ' + db.database, function(err){
     console.log("no db");
 });
 
-ambrosia.use(express.bodyParser());
-ambrosia.use(express.cookieParser());
-ambrosia.use(express.session({secret: 'boliver'}));
-ambrosia.use(express.static(__dirname + '/public'));
+ambrosia.configure(function(){
+    ambrosia.set('port', process.env.PORT || 3000);
+    ambrosia.set('views', __dirname + '/views');
+    ambrosia.set('view engine', 'jade');
+    ambrosia.use(express.favicon());
+    ambrosia.use(express.logger('dev'));
+    ambrosia.use(express.bodyParser());
+    ambrosia.use(express.cookieParser({secret: 'boliver'}));
+    ambrosia.use(express.session());
+    ambrosia.use(ambrosia.router);
+    ambrosia.use(express.static(__dirname + '/public'));
+});
+
+
+
+
+
 //ambrosia.use(validator);
 
-ambrosia.set('views', __dirname + '/views');
-ambrosia.set('view engine', 'jade');
-ambrosia.set('port', process.env.PORT || 3000);
+
+
+
 
 //require('./db')(ambrosia);
 require('./api')(ambrosia, express);
