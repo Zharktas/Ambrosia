@@ -1,21 +1,28 @@
-var fs = require('fs');
-var express = require('express');
-var http = require('http');
-var jade = require('jade');
+var express = require('express'),
+    http = require('http');
 
-var util = require('util'), crypto = require('crypto'), url = require('url');
-var path = require('path');
-//var validator = require('express-validator');
+var util = require('util'),
+    crypto = require('crypto'),
+    url = require('url'),
+    path = require('path'),
+    fs = require('fs');
 
 var mysql = require('mysql');
 
-
-//var options = {
-//	key: fs.readFileSync('../server.key'),
-//	cert: fs.readFileSync('../server.crt')
-//};
-
 var ambrosia = express();
+
+ambrosia.configure(function(){
+    ambrosia.set('port', process.env.PORT || 3000);
+    ambrosia.set('views', __dirname + '/views');
+    ambrosia.set('view engine', 'jade');
+    ambrosia.use(express.favicon());
+    ambrosia.use(express.logger('dev'));
+    ambrosia.use(express.bodyParser());
+    ambrosia.use(express.cookieParser('boliver'));
+    ambrosia.use(express.session());
+    ambrosia.use(express.static(path.join(__dirname, 'public')));
+});
+
 
 var dbFile = fs.readFileSync('db_credentials.json', 'utf8');
 var db = JSON.parse(dbFile);
@@ -31,33 +38,7 @@ ambrosia.db.query('USE ' + db.database, function(err){
     console.log("no db");
 });
 
-ambrosia.configure(function(){
-    ambrosia.set('port', process.env.PORT || 3000);
-    ambrosia.set('views', __dirname + '/views');
-    ambrosia.set('view engine', 'jade');
-    ambrosia.use(express.favicon());
-    ambrosia.use(express.logger('dev'));
-    ambrosia.use(express.bodyParser());
-    ambrosia.use(express.cookieParser('boliver'));
-    ambrosia.use(express.session());
-    //ambrosia.use(ambrosia.router);
-    ambrosia.use(express.static(path.join(__dirname, 'public')));
-
-});
-
-
-
-
-
-//ambrosia.use(validator);
-
-
-
-
-
-//require('./db')(ambrosia);
 require('./api')(ambrosia, express);
-
 
 ambrosia.all('*', function(req, res, next){
 
@@ -72,14 +53,9 @@ ambrosia.all('*', function(req, res, next){
    }
 });
 
-
-
-
 ambrosia.get('/', function(req,res){
 	res.render('index',{User: null});
 });
-
-
 
 ambrosia.post('/login', function(req,res){
 	console.log(req.body.user + " " + req.body.password);
@@ -155,11 +131,6 @@ function hash(msg, key){
 ambrosia.get('/addrecipe', function(req,res){
     res.render('addrecipe');
 });
-
-
-
-
-
 
 http.createServer(ambrosia).listen(ambrosia.get('port'), function(){
     console.log("Express server listening on port " + ambrosia.get('port'));
