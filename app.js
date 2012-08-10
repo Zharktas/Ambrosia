@@ -38,7 +38,7 @@ ambrosia.configure(function(){
     ambrosia.use(express.favicon());
     ambrosia.use(express.logger('dev'));
     ambrosia.use(express.bodyParser());
-    ambrosia.use(express.cookieParser({secret: 'boliver'}));
+    ambrosia.use(express.cookieParser('boliver'));
     ambrosia.use(express.session());
     ambrosia.use(ambrosia.router);
     ambrosia.use(express.static(__dirname + '/public'));
