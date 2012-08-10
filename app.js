@@ -4,7 +4,7 @@ var http = require('http');
 var jade = require('jade');
 
 var util = require('util'), crypto = require('crypto'), url = require('url');
-
+var path = require('path');
 //var validator = require('express-validator');
 
 var mysql = require('mysql');
@@ -40,8 +40,9 @@ ambrosia.configure(function(){
     ambrosia.use(express.bodyParser());
     ambrosia.use(express.cookieParser('boliver'));
     ambrosia.use(express.session());
-    ambrosia.use(ambrosia.router);
-    ambrosia.use(express.static(__dirname + '/public'));
+    //ambrosia.use(ambrosia.router);
+    ambrosia.use(express.static(path.join(__dirname, 'public')));
+
 });
 
 

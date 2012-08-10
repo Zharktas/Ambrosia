@@ -1,8 +1,11 @@
-if (typeof(User) == 'undefined' || User == null )
-	div#header
+extends layout
 
-else
-	header #{User}
-		a(href="/") Home
-		a(href="addrecipe") Add New Recipe
-		a(href="logout") Logout
+block header
+    if (typeof(User) == 'undefined' || User == null )
+	    div#header
+
+    else
+	    header #{User}
+		    a(href="/") Home
+		    a(href="addrecipe") Add New Recipe
+		    a(href="logout") Logout
